@@ -1,0 +1,25 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/?post_type=product",
+  "preferredVersions": { "php": "8.3", "wp": "latest" },
+  "features": { "networking": true },
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": { "resource": "wordpress.org/plugins", "slug": "woocommerce" },
+      "options": { "activate": true }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "url",
+        "url": "https://github.com/kipphard/wunschliste/releases/download/v0.1.0/wunschliste-0.1.0.zip"
+      },
+      "options": { "activate": true }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php';\nif ( class_exists( 'WC_Product_Simple' ) ) {\n  $items = array( array( 'Designer-Sessel Aurora', '299' ), array( 'Smarte Tischlampe', '79' ), array( 'Keramik-Vasen-Set', '49' ) );\n  foreach ( $items as $it ) {\n    $p = new WC_Product_Simple();\n    $p->set_name( $it[0] );\n    $p->set_status( 'publish' );\n    $p->set_catalog_visibility( 'visible' );\n    $p->set_regular_price( $it[1] );\n    $p->set_stock_status( 'instock' );\n    $p->save();\n  }\n}\n$s = get_option( 'wun_settings', array() );\n$s['show_on_loop'] = true;\nupdate_option( 'wun_settings', $s );\nwp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'Meine Wunschliste', 'post_content' => '[wunschliste]' ) );\n"
+    }
+  ]
+}

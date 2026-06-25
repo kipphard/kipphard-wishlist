@@ -1,0 +1,167 @@
+/* Wunschliste – Frontend-Styles */
+
+/* Wunschliste-Button (Loop + Einzelseite) */
+.wun-toggle-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: transparent;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	padding: 8px 14px;
+	font-size: 14px;
+	cursor: pointer;
+	color: #50575e;
+	margin-top: 8px;
+	transition: border-color 0.2s, color 0.2s;
+}
+
+.wun-toggle-btn:hover,
+.wun-toggle-btn:focus {
+	border-color: #d63638;
+	color: #d63638;
+	outline: none;
+}
+
+.wun-toggle-btn.wun-active {
+	border-color: #d63638;
+	color: #d63638;
+}
+
+.wun-toggle-btn.wun-active .wun-heart {
+	color: #d63638;
+}
+
+.wun-heart {
+	font-size: 16px;
+	line-height: 1;
+	color: #8c8f94;
+	transition: color 0.2s;
+}
+
+.wun-toggle-btn.wun-active .wun-heart,
+.wun-toggle-btn:hover .wun-heart,
+.wun-toggle-btn:focus .wun-heart {
+	color: #d63638;
+}
+
+/* Wunschlisten-Seite (Shortcode) */
+.wun-wishlist-wrap {
+	margin: 24px 0;
+}
+
+.wun-wishlist-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.wun-wishlist-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	padding: 20px 0;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.wun-wishlist-item:last-child {
+	border-bottom: none;
+}
+
+.wun-item-thumb {
+	flex-shrink: 0;
+	width: 100px;
+}
+
+.wun-item-thumb img {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 3px;
+}
+
+.wun-item-details {
+	flex: 1;
+}
+
+.wun-item-name {
+	margin: 0 0 8px;
+	font-size: 1.1em;
+}
+
+.wun-item-name a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.wun-item-name a:hover {
+	color: #2271b1;
+}
+
+.wun-item-price {
+	margin-bottom: 12px;
+	font-size: 1em;
+	font-weight: 600;
+}
+
+.wun-item-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.wun-remove-btn {
+	background: transparent;
+	border: 1px solid #d63638;
+	color: #d63638;
+	border-radius: 3px;
+	padding: 7px 14px;
+	font-size: 13px;
+	cursor: pointer;
+	transition: background 0.2s, color 0.2s;
+}
+
+.wun-remove-btn:hover,
+.wun-remove-btn:focus {
+	background: #d63638;
+	color: #fff;
+	outline: none;
+}
+
+.wun-empty {
+	color: #50575e;
+	font-style: italic;
+}
+
+/* Status-Rückmeldung (toast-ähnlich, via JS eingeblendet) */
+.wun-notice {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	padding: 12px 18px;
+	border-radius: 4px;
+	font-size: 14px;
+	z-index: 99999;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.3s, transform 0.3s;
+	pointer-events: none;
+}
+
+.wun-notice.wun-notice-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.wun-notice.wun-success {
+	background: #edfaef;
+	border: 1px solid #00a32a;
+	color: #1a4731;
+}
+
+.wun-notice.wun-error {
+	background: #fce8e8;
+	border: 1px solid #d63638;
+	color: #5c1d1e;
+}
