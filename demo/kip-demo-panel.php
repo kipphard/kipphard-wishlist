@@ -11,6 +11,25 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Demo only: let the live panel flip the wishlist button style (a server-side
+ * setting, so it updates the option and the page reloads). The demo runs as admin.
+ */
+add_action(
+	'wp_ajax_kip_demo_btn',
+	static function () {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( '', 403 );
+		}
+		check_ajax_referer( 'kip_demo' );
+		$style              = ( isset( $_POST['style'] ) && 'icon' === $_POST['style'] ) ? 'icon' : 'button';
+		$s                  = (array) get_option( 'wun_settings', array() );
+		$s['button_style']  = $style;
+		update_option( 'wun_settings', $s );
+		wp_send_json_success();
+	}
+);
+
 add_action(
 	'wp_footer',
 	static function () {
@@ -87,11 +106,19 @@ add_action(
 			<button class="kdp__opt" data-val="dark">Dark</button>
 		</div>
 	</div>
+	<div class="kdp__group">
+		<div class="kdp__label">Wishlist button (shop)</div>
+		<div class="kdp__row" data-kdp-srv="btn">
+			<button class="kdp__opt" data-val="icon">Heart on image</button>
+			<button class="kdp__opt" data-val="button">Text button</button>
+		</div>
+	</div>
 	<div class="kdp__note">Live preview · demo only</div>
 </div>
 
 <script id="kic-demo-panel-js">
 (function(){
+	var KDP_SRV={ajax:<?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,nonce:<?php echo wp_json_encode( wp_create_nonce( 'kip_demo' ) ); ?>,btn:<?php echo wp_json_encode( (string) ( ( (array) get_option( 'wun_settings', array() ) )['button_style'] ?? 'button' ) ); ?>};
 	var KEY='kipDemoDesign';
 	var state={preset:'soft',accent:'#f0834e',layout:'grid',scheme:'auto'};
 	try{var s=JSON.parse(sessionStorage.getItem(KEY)||'{}');for(var k in s){if(s[k])state[k]=s[k];}}catch(e){}
@@ -112,10 +139,15 @@ add_action(
 			var group=b.parentNode.getAttribute('data-kdp');
 			b.classList.toggle('is-active',b.getAttribute('data-val')===state[group]);
 		});
+		document.querySelectorAll('[data-kdp-srv="btn"] .kdp__opt').forEach(function(b){
+			b.classList.toggle('is-active',b.getAttribute('data-val')===KDP_SRV.btn);
+		});
 	}
 	function save(){try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
 	document.addEventListener('click',function(e){
+		var srv=e.target.closest('[data-kdp-srv="btn"] .kdp__opt');
+		if(srv){var v=srv.getAttribute('data-val');var body='action=kip_demo_btn&style='+encodeURIComponent(v)+'&_ajax_nonce='+encodeURIComponent(KDP_SRV.nonce);fetch(KDP_SRV.ajax,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body}).then(function(){location.reload();});return;}
 		var opt=e.target.closest('[data-kdp] .kdp__opt,[data-kdp] .kdp__sw');
 		if(opt){var g=opt.parentNode.getAttribute('data-kdp');state[g]=opt.getAttribute('data-val');save();apply();return;}
 		if(e.target.closest('#kdp-fab')){toggle();return;}
