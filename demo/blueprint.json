@@ -1,25 +1,49 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "landingPage": "/?post_type=product",
-  "preferredVersions": { "php": "8.3", "wp": "latest" },
-  "features": { "networking": true },
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "features": {
+    "networking": true
+  },
   "steps": [
     {
       "step": "installPlugin",
-      "pluginData": { "resource": "wordpress.org/plugins", "slug": "woocommerce" },
-      "options": { "activate": true }
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "woocommerce"
+      },
+      "options": {
+        "activate": true
+      }
     },
     {
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/kipphard/wishlist/releases/download/v0.2.3/wishlist-0.2.3.zip"
+        "url": "https://github.com/kipphard/wishlist/releases/download/v0.2.4/wishlist-0.2.4.zip"
       },
-      "options": { "activate": true }
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "mkdir",
+      "path": "/wordpress/wp-content/mu-plugins"
+    },
+    {
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/kip-demo-panel.php",
+      "data": {
+        "resource": "url",
+        "url": "https://raw.githubusercontent.com/kipphard/wishlist/main/demo/kip-demo-panel.php"
+      }
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php';\nif ( class_exists( 'WC_Product_Simple' ) ) {\n  $items = array( array( 'Aurora Designer Chair', '299' ), array( 'Smart Table Lamp', '79' ), array( 'Ceramic Vase Set', '49' ) );\n  foreach ( $items as $it ) {\n    $p = new WC_Product_Simple();\n    $p->set_name( $it[0] );\n    $p->set_status( 'publish' );\n    $p->set_catalog_visibility( 'visible' );\n    $p->set_regular_price( $it[1] );\n    $p->set_stock_status( 'instock' );\n    $p->save();\n  }\n}\n$page_id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'My Wishlist', 'post_content' => '[wishlist]' ) );\n$s = get_option( 'wun_settings', array() );\n$s['show_on_loop'] = true;\n$s['kip_style_enabled'] = true;\n$s['kip_preset'] = 'soft';\n$s['kip_accent'] = '#f0834e';\n$s['kip_layout'] = 'grid';\n$s['page_id'] = $page_id;\nupdate_option( 'wun_settings', $s );\n"
+      "code": "<?php require_once '/wordpress/wp-load.php';\nif ( class_exists( 'WC_Product_Simple' ) ) {\n  $items = array( array( 'Aurora Designer Chair', '299' ), array( 'Smart Table Lamp', '79' ), array( 'Ceramic Vase Set', '49' ) );\n  foreach ( $items as $it ) {\n    $p = new WC_Product_Simple();\n    $p->set_name( $it[0] );\n    $p->set_status( 'publish' );\n    $p->set_catalog_visibility( 'visible' );\n    $p->set_regular_price( $it[1] );\n    $p->set_stock_status( 'instock' );\n    $p->save();\n  }\n}\n$page_id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'publish', 'post_title' => 'My Wishlist', 'post_content' => '[wishlist]' ) );\n$s = get_option( 'wun_settings', array() );\n$s['show_on_loop'] = true;\n$s['kip_style_enabled'] = true;\n$s['kip_preset'] = 'soft';\n$s['kip_accent'] = '#f0834e';\n$s['kip_layout'] = 'grid';\n$s['button_style'] = 'icon';\n$s['page_id'] = $page_id;\nupdate_option( 'wun_settings', $s );\n"
     }
   ]
 }
