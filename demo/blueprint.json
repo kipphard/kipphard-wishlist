@@ -23,7 +23,7 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/kipphard/wishlist/releases/download/v0.2.4/wishlist-0.2.4.zip"
+        "url": "https://github.com/kipphard/wishlist/releases/download/v0.2.5/wishlist-0.2.5.zip"
       },
       "options": {
         "activate": true
