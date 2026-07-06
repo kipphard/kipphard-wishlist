@@ -46,11 +46,7 @@ final class Plugin {
 	 * Laufzeit-Hooks registrieren.
 	 */
 	public function boot() {
-		load_plugin_textdomain(
-			'wunschliste',
-			false,
-			dirname( plugin_basename( WUN_FILE ) ) . '/languages'
-		);
+		// Translations load automatically (WP 4.6+ just-in-time): WordPress.org language packs by slug + the bundled languages/kipphard-wishlist-<locale>.mo.
 
 		// WooCommerce ist Pflicht – ohne es läuft nichts.
 		if ( ! class_exists( 'WooCommerce' ) ) {
@@ -77,8 +73,8 @@ final class Plugin {
 		?>
 		<div class="notice notice-error">
 			<p>
-				<strong><?php esc_html_e( 'Wunschliste', 'wunschliste' ); ?>:</strong>
-				<?php esc_html_e( 'WooCommerce muss installiert und aktiviert sein, damit dieses Plugin funktioniert.', 'wunschliste' ); ?>
+				<strong><?php esc_html_e( 'Wishlist', 'kipphard-wishlist' ); ?>:</strong>
+				<?php esc_html_e( 'WooCommerce must be installed and activated for this plugin to work.', 'kipphard-wishlist' ); ?>
 			</p>
 		</div>
 		<?php

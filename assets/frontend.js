@@ -18,7 +18,7 @@
 	 * @param {string}  message Anzuzeigender Text.
 	 * @param {boolean} success True = Erfolg, false = Fehler.
 	 */
-	function showNotice( message, success ) {
+	function showNotice( message, success, linkUrl, linkLabel ) {
 		var notice = document.getElementById( 'wun-notice' );
 		if ( ! notice ) {
 			notice = document.createElement( 'div' );
@@ -27,19 +27,32 @@
 			document.body.appendChild( notice );
 		}
 
-		notice.textContent = message;
-		notice.className   = 'wun-notice ' + ( success ? 'wun-success' : 'wun-error' );
+		notice.innerHTML = '';
+		// 'kip-ui' on the element itself so the design tokens resolve (the toast lives
+		// on <body>, outside the scoped wrapper).
+		notice.className = 'kip-ui kip-notice ' + ( success ? 'kip-notice--success' : 'kip-notice--error' );
+
+		var textNode = document.createTextNode( message );
+		notice.appendChild( textNode );
+
+		if ( linkUrl && linkLabel ) {
+			var link = document.createElement( 'a' );
+			link.href = linkUrl;
+			link.textContent = linkLabel;
+			link.className = 'kip-notice__link';
+			notice.appendChild( link );
+		}
 
 		// Kurz warten, dann einblenden (CSS-Transition).
 		setTimeout( function () {
-			notice.classList.add( 'wun-notice-visible' );
+			notice.classList.add( 'is-visible' );
 		}, 10 );
 
-		// Nach 3 Sekunden ausblenden.
+		// Auto-hide; keep it up longer when an actionable link is shown so it can be clicked.
 		clearTimeout( notice._hideTimer );
 		notice._hideTimer = setTimeout( function () {
-			notice.classList.remove( 'wun-notice-visible' );
-		}, 3000 );
+			notice.classList.remove( 'is-visible' );
+		}, ( linkUrl && linkLabel ) ? 6000 : 3000 );
 	}
 
 	/**
@@ -49,14 +62,29 @@
 	 * @param {boolean} inList    True wenn auf der Wunschliste.
 	 */
 	function updateButtons( productId, inList ) {
+		var i18n    = data.i18n || {};
 		var buttons = document.querySelectorAll( '.wun-toggle-btn[data-product-id="' + productId + '"]' );
 		buttons.forEach( function ( btn ) {
-			if ( inList ) {
-				btn.classList.add( 'wun-active' );
-				btn.setAttribute( 'aria-pressed', 'true' );
-			} else {
-				btn.classList.remove( 'wun-active' );
-				btn.setAttribute( 'aria-pressed', 'false' );
+			btn.classList.toggle( 'wun-active', inList );
+			btn.setAttribute( 'aria-pressed', inList ? 'true' : 'false' );
+
+			// Button style: swap the visible label ("Add to wishlist" ↔ "In wishlist").
+			var label = btn.querySelector( '.wun-btn-label' );
+			if ( label ) {
+				var add   = label.getAttribute( 'data-add' );
+				var added = label.getAttribute( 'data-added' );
+				if ( add && added ) {
+					label.textContent = inList ? added : add;
+				}
+			}
+
+			// Icon style: update the accessible label/tooltip.
+			if ( btn.classList.contains( 'wun-toggle-btn--icon' ) ) {
+				var al = inList ? ( i18n.in_list || '' ) : ( i18n.button || '' );
+				if ( al ) {
+					btn.setAttribute( 'aria-label', al );
+					btn.setAttribute( 'title', al );
+				}
 			}
 		} );
 	}
@@ -105,7 +133,7 @@
 
 		btn.disabled = true;
 
-		doAjax( 'wun_toggle', productId, function ( success, result ) {
+		doAjax( 'kipphard_wishlist_toggle', productId, function ( success, result ) {
 			btn.disabled = false;
 
 			if ( success ) {
@@ -113,12 +141,14 @@
 				activeIds[ productId ] = inList ? true : undefined;
 				updateButtons( productId, inList );
 
-				var i18n   = data.i18n || {};
-				var msg    = inList ? ( i18n.added || '' ) : ( i18n.removed || '' );
-				showNotice( msg, true );
+				var i18n      = data.i18n || {};
+				var msg       = inList ? ( i18n.added || '' ) : ( i18n.removed || '' );
+				var linkUrl   = ( inList && result.redirect_url ) ? result.redirect_url : '';
+				var linkLabel = linkUrl ? ( i18n.view_list || '' ) : '';
+				showNotice( msg, true, linkUrl, linkLabel );
 			} else {
-				var i18n  = data.i18n || {};
-				showNotice( i18n.error || 'Fehler', false );
+				var i18n = data.i18n || {};
+				showNotice( i18n.error || 'Error', false );
 			}
 		} );
 	}
@@ -131,7 +161,7 @@
 	function handleRemove( e ) {
 		var btn       = e.currentTarget;
 		var productId = parseInt( btn.getAttribute( 'data-product-id' ), 10 );
-		var item      = btn.closest( '.wun-wishlist-item' );
+		var item      = btn.closest( '.wun-item' );
 
 		if ( ! productId ) {
 			return;
@@ -139,7 +169,7 @@
 
 		btn.disabled = true;
 
-		doAjax( 'wun_remove', productId, function ( success ) {
+		doAjax( 'kipphard_wishlist_remove', productId, function ( success ) {
 			btn.disabled = false;
 
 			if ( success ) {
@@ -157,7 +187,7 @@
 				showNotice( i18n.removed || '', true );
 			} else {
 				var i18n = data.i18n || {};
-				showNotice( i18n.error || 'Fehler', false );
+				showNotice( i18n.error || 'Error', false );
 			}
 		} );
 	}
@@ -176,9 +206,18 @@
 		} );
 
 		// Entfernen-Buttons in der Wunschlisten-Seite initialisieren.
-		var removeBtns = document.querySelectorAll( '.wun-remove-btn' );
+		var removeBtns = document.querySelectorAll( '.wun-remove' );
 		removeBtns.forEach( function ( btn ) {
 			btn.addEventListener( 'click', handleRemove );
+		} );
+
+		// Icon style: anchor each heart to its own product cell so the overlay sits on
+		// the image (theme-agnostic — the loop hook makes the heart the cell's first child).
+		document.querySelectorAll( '.wun-toggle-btn--icon' ).forEach( function ( btn ) {
+			var cell = btn.parentElement;
+			if ( cell && window.getComputedStyle( cell ).position === 'static' ) {
+				cell.style.position = 'relative';
+			}
 		} );
 	} );
 }() );

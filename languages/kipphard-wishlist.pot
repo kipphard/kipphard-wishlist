@@ -1,0 +1,169 @@
+# Kipphard Wishlist for WooCommerce POT file.
+# Copyright (C) 2026 André Kipphard
+# This file is distributed under the same license as the kipphard-wishlist package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kipphard-wishlist 0.4.0\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-admin.php:32 includes/class-admin.php:132
+msgid "Wishlist – Settings"
+msgstr ""
+
+#: includes/class-admin.php:33 includes/class-plugin.php:76
+msgid "Wishlist"
+msgstr ""
+
+#: includes/class-admin.php:136
+msgid "Settings saved."
+msgstr ""
+
+#: includes/class-admin.php:147
+msgid "Button label"
+msgstr ""
+
+#: includes/class-admin.php:156
+msgid "In-wishlist label"
+msgstr ""
+
+#: includes/class-admin.php:161
+msgid "Shown once a product has been added (button style)."
+msgstr ""
+
+#: includes/class-admin.php:166
+msgid "Button style"
+msgstr ""
+
+#: includes/class-admin.php:170
+msgid "Text button"
+msgstr ""
+
+#: includes/class-admin.php:171
+msgid "Heart icon on the product image"
+msgstr ""
+
+#: includes/class-admin.php:177
+msgid "Remove label"
+msgstr ""
+
+#: includes/class-admin.php:185
+msgid "Show button"
+msgstr ""
+
+#: includes/class-admin.php:190
+msgid "In product lists (shop, category)"
+msgstr ""
+
+#: includes/class-admin.php:195
+msgid "On single product pages"
+msgstr ""
+
+#: includes/class-admin.php:202
+msgid "Wishlist page"
+msgstr ""
+
+#: includes/class-admin.php:206
+msgid "— No page selected —"
+msgstr ""
+
+#: includes/class-admin.php:214
+msgid "Page containing the [kipphard_wishlist] shortcode."
+msgstr ""
+
+#: includes/class-admin.php:220
+msgid "Empty notice"
+msgstr ""
+
+#: includes/class-admin.php:229
+msgid "Message: Added"
+msgstr ""
+
+#: includes/class-admin.php:238
+msgid "Message: Removed"
+msgstr ""
+
+#: includes/class-admin.php:247
+msgid "Error message"
+msgstr ""
+
+#: includes/class-admin.php:257
+msgid "Appearance"
+msgstr ""
+
+#: includes/class-admin.php:259
+msgid ""
+"Make the wishlist match your brand in seconds — or switch it off to inherit "
+"your theme completely."
+msgstr ""
+
+#: includes/class-admin.php:266
+msgid "Save settings"
+msgstr ""
+
+#: includes/class-admin.php:273
+msgid "Sharing"
+msgstr ""
+
+#: includes/class-admin.php:274
+msgid ""
+"Wishlist sharing is active — customers can generate a public link to their "
+"wishlist."
+msgstr ""
+
+#: includes/class-admin.php:276
+msgid "Most-wished products"
+msgstr ""
+
+#: includes/class-admin.php:281
+msgid "No data available yet."
+msgstr ""
+
+#: includes/class-admin.php:286
+msgid "Product"
+msgstr ""
+
+#: includes/class-admin.php:287
+msgid "Entries"
+msgstr ""
+
+#: includes/class-admin.php:317
+msgid "Looking for wishlist sharing?"
+msgstr ""
+
+#: includes/class-admin.php:318
+msgid "See Wishlist Pro."
+msgstr ""
+
+#: includes/class-frontend.php:103
+msgid "View wishlist"
+msgstr ""
+
+#: includes/class-frontend.php:177 includes/class-frontend.php:182
+#: includes/class-frontend.php:217
+msgid "Invalid product."
+msgstr ""
+
+#: includes/class-helpers.php:113
+msgid "Permission denied."
+msgstr ""
+
+#: includes/class-plugin.php:77
+msgid "WooCommerce must be installed and activated for this plugin to work."
+msgstr ""
+
+#: includes/class-sharing.php:135
+msgid "This wishlist does not exist or the link has expired."
+msgstr ""
+
+#: includes/class-sharing.php:143
+msgid "Shared wishlist"
+msgstr ""
+
+#: includes/class-sharing.php:146
+msgid "This wishlist is empty."
+msgstr ""

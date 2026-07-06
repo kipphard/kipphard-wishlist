@@ -1,0 +1,205 @@
+# German (Germany) translation for Wunschliste.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wunschliste 0.1.0\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-admin.php:32 includes/class-admin.php:132
+msgid "Wishlist – Settings"
+msgstr "Wunschliste – Einstellungen"
+
+#: includes/class-admin.php:33 includes/class-plugin.php:76
+msgid "Wishlist"
+msgstr "Wunschliste"
+
+#: includes/class-admin.php:136
+msgid "Settings saved."
+msgstr "Einstellungen gespeichert."
+
+#: includes/class-admin.php:147
+msgid "Button label"
+msgstr "Button-Beschriftung"
+
+#: includes/class-admin.php:156
+msgid "In-wishlist label"
+msgstr ""
+
+#: includes/class-admin.php:161
+msgid "Shown once a product has been added (button style)."
+msgstr ""
+
+#: includes/class-admin.php:166
+msgid "Button style"
+msgstr ""
+
+#: includes/class-admin.php:170
+msgid "Text button"
+msgstr ""
+
+#: includes/class-admin.php:171
+msgid "Heart icon on the product image"
+msgstr ""
+
+#: includes/class-admin.php:177
+msgid "Remove label"
+msgstr "Entfernen-Beschriftung"
+
+#: includes/class-admin.php:185
+msgid "Show button"
+msgstr "Button anzeigen"
+
+#: includes/class-admin.php:190
+msgid "In product lists (shop, category)"
+msgstr "In Produktlisten (Shop, Kategorie)"
+
+#: includes/class-admin.php:195
+msgid "On single product pages"
+msgstr "Auf Einzelprodukt-Seiten"
+
+#: includes/class-admin.php:202
+msgid "Wishlist page"
+msgstr "Wunschlisten-Seite"
+
+#: includes/class-admin.php:206
+msgid "— No page selected —"
+msgstr "— Keine Seite ausgewählt —"
+
+#: includes/class-admin.php:214
+msgid "Page containing the [kipphard_wishlist] shortcode."
+msgstr ""
+
+#: includes/class-admin.php:220
+msgid "Empty notice"
+msgstr "Leer-Hinweis"
+
+#: includes/class-admin.php:229
+msgid "Message: Added"
+msgstr "Meldung: Hinzugefügt"
+
+#: includes/class-admin.php:238
+msgid "Message: Removed"
+msgstr "Meldung: Entfernt"
+
+#: includes/class-admin.php:247
+msgid "Error message"
+msgstr "Fehlermeldung"
+
+#: includes/class-admin.php:257
+msgid "Appearance"
+msgstr ""
+
+#: includes/class-admin.php:259
+msgid ""
+"Make the wishlist match your brand in seconds — or switch it off to inherit "
+"your theme completely."
+msgstr ""
+
+#: includes/class-admin.php:266
+msgid "Save settings"
+msgstr "Einstellungen speichern"
+
+#: includes/class-admin.php:273
+msgid "Sharing"
+msgstr ""
+
+#: includes/class-admin.php:274
+msgid ""
+"Wishlist sharing is active — customers can generate a public link to their "
+"wishlist."
+msgstr ""
+
+#: includes/class-admin.php:276
+msgid "Most-wished products"
+msgstr "Meistgewünschte Produkte"
+
+#: includes/class-admin.php:281
+msgid "No data available yet."
+msgstr "Noch keine Daten vorhanden."
+
+#: includes/class-admin.php:286
+msgid "Product"
+msgstr "Produkt"
+
+#: includes/class-admin.php:287
+msgid "Entries"
+msgstr "Einträge"
+
+#: includes/class-admin.php:317
+msgid "Looking for wishlist sharing?"
+msgstr ""
+
+#: includes/class-admin.php:318
+msgid "See Wishlist Pro."
+msgstr ""
+
+#: includes/class-frontend.php:103
+msgid "View wishlist"
+msgstr "Wunschliste ansehen"
+
+#: includes/class-frontend.php:177 includes/class-frontend.php:182
+#: includes/class-frontend.php:217
+msgid "Invalid product."
+msgstr "Ungültiges Produkt."
+
+#: includes/class-helpers.php:113
+msgid "Permission denied."
+msgstr "Keine Berechtigung."
+
+#: includes/class-plugin.php:77
+msgid "WooCommerce must be installed and activated for this plugin to work."
+msgstr ""
+"WooCommerce muss installiert und aktiviert sein, damit dieses Plugin "
+"funktioniert."
+
+#: includes/class-sharing.php:135
+msgid "This wishlist does not exist or the link has expired."
+msgstr "Diese Wunschliste existiert nicht oder der Link ist abgelaufen."
+
+#: includes/class-sharing.php:143
+msgid "Shared wishlist"
+msgstr "Geteilte Wunschliste"
+
+#: includes/class-sharing.php:146
+msgid "This wishlist is empty."
+msgstr "Diese Wunschliste ist leer."
+
+#~ msgid "Page containing the [wishlist] shortcode."
+#~ msgstr "Seite mit dem Shortcode [wishlist]."
+
+#~ msgid "Pro features"
+#~ msgstr "Pro-Funktionen"
+
+#~ msgid "Wishlist Pro is active."
+#~ msgstr "Wunschliste Pro ist aktiv."
+
+#~ msgid "Share wishlist: public sharing link"
+#~ msgstr "Wunschliste teilen: öffentlicher Link zum Teilen"
+
+#~ msgid "Variation support: wishlist at the variant level"
+#~ msgstr "Variationsunterstützung: Wunschliste auf Variantenebene"
+
+#~ msgid "Analytics: most-wished products in the admin"
+#~ msgstr "Analytik: meistgewünschte Produkte im Admin"
+
+#~ msgid "Wishlist Pro"
+#~ msgstr "Wunschliste Pro"
+
+#~ msgid "Share wishlist: public link for friends & family"
+#~ msgstr "Wunschliste teilen: öffentlicher Link für Freunde & Familie"
+
+#~ msgid "Variation support: entries at the product variant level"
+#~ msgstr "Variationsunterstützung: Einträge auf Produktvariantenebene"
+
+#~ msgid "Analytics: most-wished products in the admin dashboard"
+#~ msgstr "Analytik: meistgewünschte Produkte im Admin-Dashboard"
+
+#~ msgid "Upgrade now"
+#~ msgstr "Jetzt upgraden"

@@ -1,167 +1,272 @@
-/* Wunschliste – Frontend-Styles */
+/**
+ * Wishlist — frontend styles, built on the shared kip-ui design system.
+ * The wishlist page is scoped under .kip-wishlist (tokens from kip-ui); the
+ * add-to-wishlist button lives in the WooCommerce loop (outside the scope), so
+ * it is styled stand-alone. Values fall back gracefully if kip-ui is absent.
+ */
 
-/* Wunschliste-Button (Loop + Einzelseite) */
+/* ── Add-to-wishlist button (shop loop / single product) ─────────────────── */
 .wun-toggle-btn {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
-	background: transparent;
-	border: 1px solid #8c8f94;
-	border-radius: 3px;
-	padding: 8px 14px;
-	font-size: 14px;
-	cursor: pointer;
-	color: #50575e;
+	gap: 7px;
 	margin-top: 8px;
-	transition: border-color 0.2s, color 0.2s;
+	padding: 8px 15px;
+	background: transparent;
+	border: 1px solid #d4d7dc;
+	border-radius: 999px;
+	color: #6b7280;
+	font: inherit;
+	font-size: 0.9em;
+	font-weight: 600;
+	line-height: 1.1;
+	cursor: pointer;
+	transition: color 0.18s, border-color 0.18s, background 0.18s, transform 0.18s;
 }
-
 .wun-toggle-btn:hover,
-.wun-toggle-btn:focus {
-	border-color: #d63638;
-	color: #d63638;
+.wun-toggle-btn:focus-visible {
+	color: #e0245e;
+	border-color: #f0a6bd;
 	outline: none;
 }
-
 .wun-toggle-btn.wun-active {
-	border-color: #d63638;
-	color: #d63638;
+	color: #e0245e;
+	border-color: #e0245e;
+	background: rgba(224, 36, 94, 0.06);
 }
-
-.wun-toggle-btn.wun-active .wun-heart {
-	color: #d63638;
-}
-
 .wun-heart {
-	font-size: 16px;
-	line-height: 1;
-	color: #8c8f94;
-	transition: color 0.2s;
+	display: inline-flex;
+	line-height: 0;
+	transition: transform 0.18s ease;
+}
+.wun-heart-svg {
+	display: block;
+}
+.wun-toggle-btn:hover .wun-heart {
+	transform: scale(1.12);
+}
+.wun-toggle-btn.wun-active {
+	--wun-heart-fill: currentColor;
+}
+.wun-toggle-btn.wun-active .wun-heart {
+	animation: wun-pop 0.32s ease;
+}
+@keyframes wun-pop {
+	0% { transform: scale(0.6); }
+	60% { transform: scale(1.25); }
+	100% { transform: scale(1); }
 }
 
-.wun-toggle-btn.wun-active .wun-heart,
-.wun-toggle-btn:hover .wun-heart,
-.wun-toggle-btn:focus .wun-heart {
-	color: #d63638;
+/* ── Heart icon overlaid on the product image (button_style = icon) ───────── */
+.woocommerce ul.products li.product,
+ul.products li.product,
+li.product,
+.wc-block-grid__product,
+.wp-block-woocommerce-product-template li,
+.products li {
+	position: relative;
 }
-
-/* Wunschlisten-Seite (Shortcode) */
-.wun-wishlist-wrap {
-	margin: 24px 0;
-}
-
-.wun-wishlist-list {
-	list-style: none;
+.wun-toggle-btn--icon {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 3;
+	width: 40px;
+	height: 40px;
 	margin: 0;
 	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.92);
+	color: #4b5563;
+	box-shadow: 0 2px 8px rgba(16, 24, 40, 0.18);
+	-webkit-backdrop-filter: blur(2px);
+	backdrop-filter: blur(2px);
+	transition: transform 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.wun-toggle-btn--icon:hover,
+.wun-toggle-btn--icon:focus-visible {
+	transform: scale(1.08);
+	color: #e0245e;
+	outline: none;
+}
+.wun-toggle-btn--icon.wun-active {
+	color: #e0245e;
+}
+.wun-toggle-btn--icon .wun-heart-svg {
+	width: 21px;
+	height: 21px;
 }
 
-.wun-wishlist-item {
-	display: flex;
-	align-items: flex-start;
-	gap: 20px;
-	padding: 20px 0;
-	border-bottom: 1px solid #e0e0e0;
+/* ── Wishlist page (shortcode) ───────────────────────────────────────────── */
+.kip-wishlist {
+	margin: 24px 0;
 }
-
-.wun-wishlist-item:last-child {
-	border-bottom: none;
+.kip-wishlist .wun-wishlist {
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
-
-.wun-item-thumb {
-	flex-shrink: 0;
-	width: 100px;
+.kip-wishlist .wun-item {
+	margin: 0;
+	min-width: 0;
 }
-
-.wun-item-thumb img {
+.wun-item__thumb {
+	display: block;
+}
+.wun-item__thumb img {
+	display: block;
 	width: 100%;
 	height: auto;
-	display: block;
-	border-radius: 3px;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	background: var(--kip-surface-2, #f6f7f9);
 }
-
-.wun-item-details {
-	flex: 1;
+.wun-item__body {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: var(--kip-pad, 16px);
+	min-width: 0;
 }
-
-.wun-item-name {
-	margin: 0 0 8px;
-	font-size: 1.1em;
-}
-
-.wun-item-name a {
-	text-decoration: none;
-	color: inherit;
-}
-
-.wun-item-name a:hover {
-	color: #2271b1;
-}
-
-.wun-item-price {
-	margin-bottom: 12px;
-	font-size: 1em;
+.wun-item__name {
+	margin: 0;
+	font-size: 1.02em;
 	font-weight: 600;
+	line-height: 1.3;
 }
-
-.wun-item-actions {
+.wun-item__name a {
+	color: inherit;
+	text-decoration: none;
+}
+.wun-item__name a:hover {
+	color: var(--kip-accent, #2563eb);
+}
+.wun-item__price {
+	color: var(--kip-accent, #2563eb);
+	font-weight: 700;
+}
+.wun-item__price del {
+	color: var(--kip-muted, #667085);
+	font-weight: 400;
+	margin-right: 6px;
+}
+.wun-item__actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex-wrap: wrap;
+	margin-top: auto;
+	padding-top: 4px;
 }
 
-.wun-remove-btn {
-	background: transparent;
-	border: 1px solid #d63638;
-	color: #d63638;
-	border-radius: 3px;
+/* Make WooCommerce's add-to-cart button look like a kip primary button. */
+.kip-wishlist .wun-item__actions .button,
+.kip-wishlist .wun-item__actions .add_to_cart_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	margin: 0;
 	padding: 7px 14px;
-	font-size: 13px;
+	border: 0;
+	border-radius: var(--kip-radius-pill, 999px);
+	background: var(--kip-accent, #2563eb);
+	color: var(--kip-on-accent, #fff);
+	font-weight: 600;
+	font-size: 0.9em;
+	line-height: 1.1;
+	text-decoration: none;
 	cursor: pointer;
-	transition: background 0.2s, color 0.2s;
+	transition: background 0.18s, transform 0.18s;
+}
+.kip-wishlist .wun-item__actions .button:hover,
+.kip-wishlist .wun-item__actions .add_to_cart_button:hover {
+	background: var(--kip-accent-hover, #1d4ed8);
+	transform: translateY(-1px);
+}
+.kip-wishlist .wun-item__actions .added_to_cart {
+	align-self: center;
+	font-size: 0.85em;
+	color: var(--kip-muted, #667085);
 }
 
-.wun-remove-btn:hover,
-.wun-remove-btn:focus {
-	background: #d63638;
-	color: #fff;
-	outline: none;
+/* Layout: grid (cards) */
+.wun-wishlist[data-layout="grid"] {
+	display: grid;
+	/* Cap the column width so a single item stays a normal tile (~280px) instead of
+	   stretching full-width; auto-fill + centering wraps 2–4 per row by available width. */
+	grid-template-columns: repeat(auto-fill, minmax(200px, 280px));
+	justify-content: center;
+	gap: var(--kip-gap, 16px);
+}
+.wun-wishlist[data-layout="grid"] .wun-item {
+	display: flex;
+	flex-direction: column;
 }
 
-.wun-empty {
-	color: #50575e;
-	font-style: italic;
+/* Layout: list (horizontal rows as cards) */
+.wun-wishlist[data-layout="list"] {
+	display: flex;
+	flex-direction: column;
+	gap: var(--kip-gap, 16px);
+}
+.wun-wishlist[data-layout="list"] .wun-item {
+	display: grid;
+	grid-template-columns: 132px 1fr;
+	align-items: stretch;
+}
+.wun-wishlist[data-layout="list"] .wun-item__thumb img {
+	height: 100%;
 }
 
-/* Status-Rückmeldung (toast-ähnlich, via JS eingeblendet) */
-.wun-notice {
-	position: fixed;
-	bottom: 24px;
-	right: 24px;
-	padding: 12px 18px;
-	border-radius: 4px;
-	font-size: 14px;
-	z-index: 99999;
-	opacity: 0;
-	transform: translateY(10px);
-	transition: opacity 0.3s, transform 0.3s;
-	pointer-events: none;
+/* Layout: table (compact flat rows) */
+.wun-wishlist[data-layout="table"] {
+	display: flex;
+	flex-direction: column;
+}
+.wun-wishlist[data-layout="table"] .wun-item {
+	display: grid;
+	grid-template-columns: 56px 1fr;
+	gap: 16px;
+	align-items: center;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	background: transparent;
+	border-bottom: 1px solid var(--kip-border, #e4e7ec);
+	overflow: visible;
+}
+.wun-wishlist[data-layout="table"] .wun-item__thumb img {
+	width: 56px;
+	height: 56px;
+	border-radius: var(--kip-radius-sm, 8px);
+}
+.wun-wishlist[data-layout="table"] .wun-item__body {
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 0;
+	flex-wrap: wrap;
+}
+.wun-wishlist[data-layout="table"] .wun-item__name {
+	flex: 1 1 50%;
+}
+.wun-wishlist[data-layout="table"] .wun-item__actions {
+	margin: 0;
+	padding: 0;
 }
 
-.wun-notice.wun-notice-visible {
-	opacity: 1;
-	transform: translateY(0);
+/* Empty state inherits .kip-empty from kip-ui. */
+.kip-wishlist .wun-empty {
+	margin: 0;
 }
 
-.wun-notice.wun-success {
-	background: #edfaef;
-	border: 1px solid #00a32a;
-	color: #1a4731;
-}
-
-.wun-notice.wun-error {
-	background: #fce8e8;
-	border: 1px solid #d63638;
-	color: #5c1d1e;
+@media (max-width: 480px) {
+	.wun-wishlist[data-layout="list"] .wun-item {
+		grid-template-columns: 96px 1fr;
+	}
 }

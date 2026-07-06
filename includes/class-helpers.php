@@ -18,19 +18,10 @@ class Helpers {
 	const CAP = 'manage_options';
 
 	/** Options-Key für die Plugin-Einstellungen. */
-	const OPT_SETTINGS = 'wun_settings';
+	const OPT_SETTINGS = 'kipphard_wishlist_settings';
 
 	/** Cookie-Name für den Gast-Token. */
-	const COOKIE_NAME = 'wun_token';
-
-	/**
-	 * Prüft ob die Pro-Lizenz aktiv ist. Standardmäßig false.
-	 *
-	 * @return bool
-	 */
-	public static function is_pro() {
-		return (bool) apply_filters( 'wun_is_pro', defined( 'WUN_PRO' ) && WUN_PRO );
-	}
+	const COOKIE_NAME = 'kipphard_wishlist_token';
 
 	/**
 	 * Gibt den vollständigen Tabellennamen zurück.
@@ -39,7 +30,7 @@ class Helpers {
 	 */
 	public static function table() {
 		global $wpdb;
-		return $wpdb->prefix . 'wun_items';
+		return $wpdb->prefix . 'kipphard_wishlist_items';
 	}
 
 	/**
@@ -48,17 +39,23 @@ class Helpers {
 	 * @return array<string,mixed>
 	 */
 	public static function defaults() {
-		return array(
-			'button_label'  => 'Auf die Wunschliste',
-			'remove_label'  => 'Von der Wunschliste entfernen',
+		$base = array(
+			'button_label'  => 'Add to wishlist',
+			'in_list_label' => 'In wishlist',
+			'button_style'  => 'button',
+			'remove_label'  => 'Remove from wishlist',
 			'show_on_loop'  => true,
 			'show_on_single' => true,
 			'page_id'       => 0,
-			'empty_text'    => 'Deine Wunschliste ist leer.',
-			'msg_added'     => 'Zur Wunschliste hinzugefügt.',
-			'msg_removed'   => 'Von der Wunschliste entfernt.',
-			'msg_error'     => 'Es ist ein Fehler aufgetreten. Bitte versuche es erneut.',
+			'empty_text'    => 'Your wishlist is empty.',
+			'msg_added'     => 'Added to wishlist.',
+			'msg_removed'   => 'Removed from wishlist.',
+			'msg_error'     => 'Something went wrong. Please try again.',
 		);
+		if ( class_exists( '\Kipphard\Shared\Appearance' ) ) {
+			$base = array_merge( $base, \Kipphard\Shared\Appearance::defaults() );
+		}
+		return $base;
 	}
 
 	/**
@@ -84,8 +81,10 @@ class Helpers {
 
 		$page_id = isset( $raw['page_id'] ) ? absint( $raw['page_id'] ) : 0;
 
-		return array(
+		$clean = array(
 			'button_label'   => isset( $raw['button_label'] ) ? sanitize_text_field( wp_unslash( $raw['button_label'] ) ) : $defaults['button_label'],
+			'in_list_label'  => isset( $raw['in_list_label'] ) ? sanitize_text_field( wp_unslash( $raw['in_list_label'] ) ) : $defaults['in_list_label'],
+			'button_style'   => ( isset( $raw['button_style'] ) && 'icon' === $raw['button_style'] ) ? 'icon' : 'button',
 			'remove_label'   => isset( $raw['remove_label'] ) ? sanitize_text_field( wp_unslash( $raw['remove_label'] ) ) : $defaults['remove_label'],
 			'show_on_loop'   => ! empty( $raw['show_on_loop'] ),
 			'show_on_single' => ! empty( $raw['show_on_single'] ),
@@ -95,6 +94,12 @@ class Helpers {
 			'msg_removed'    => isset( $raw['msg_removed'] ) ? sanitize_text_field( wp_unslash( $raw['msg_removed'] ) ) : $defaults['msg_removed'],
 			'msg_error'      => isset( $raw['msg_error'] ) ? sanitize_text_field( wp_unslash( $raw['msg_error'] ) ) : $defaults['msg_error'],
 		);
+
+		if ( class_exists( '\Kipphard\Shared\Appearance' ) ) {
+			$clean = array_merge( $clean, \Kipphard\Shared\Appearance::sanitize( $raw ) );
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -105,7 +110,7 @@ class Helpers {
 	 */
 	public static function guard_post( $action, $field = '_wpnonce' ) {
 		if ( ! current_user_can( self::CAP ) ) {
-			wp_die( esc_html__( 'Keine Berechtigung.', 'wunschliste' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Permission denied.', 'kipphard-wishlist' ), '', array( 'response' => 403 ) );
 		}
 		check_admin_referer( $action, $field );
 	}

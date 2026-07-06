@@ -9,8 +9,8 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
 
-delete_option( 'wun_settings' );
-delete_option( 'wun_share_tokens' );
+delete_option( 'kipphard_wishlist_settings' );
+delete_option( 'kipphard_wishlist_share_tokens' );
 
-$table = $wpdb->prefix . 'wun_items';
+$table = $wpdb->prefix . 'kipphard_wishlist_items';
 $wpdb->query( "DROP TABLE IF EXISTS {$table}" );

@@ -20,7 +20,7 @@ class Admin {
 	public function hooks() {
 		add_action( 'admin_menu', array( $this, 'register_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-		add_action( 'admin_post_wun_save_settings', array( $this, 'handle_save_settings' ) );
+		add_action( 'admin_post_kipphard_wishlist_save_settings', array( $this, 'handle_save_settings' ) );
 	}
 
 	/**
@@ -29,10 +29,10 @@ class Admin {
 	public function register_menus() {
 		add_submenu_page(
 			'woocommerce',
-			__( 'Wunschliste – Einstellungen', 'wunschliste' ),
-			__( 'Wunschliste', 'wunschliste' ),
+			__( 'Wishlist – Settings', 'kipphard-wishlist' ),
+			__( 'Wishlist', 'kipphard-wishlist' ),
 			Helpers::CAP,
-			WUN_SLUG . '-settings',
+			KIPPHARD_WISHLIST_SLUG . '-settings',
 			array( $this, 'render_settings' )
 		);
 	}
@@ -43,20 +43,20 @@ class Admin {
 	 * @param string $hook Aktueller Admin-Seiten-Hook.
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( 'woocommerce_page_' . WUN_SLUG . '-settings' !== $hook ) {
+		if ( 'woocommerce_page_' . KIPPHARD_WISHLIST_SLUG . '-settings' !== $hook ) {
 			return;
 		}
 		wp_enqueue_style(
-			'wun-admin',
-			WUN_URL . 'assets/admin.css',
+			'kipphard-wishlist-admin',
+			KIPPHARD_WISHLIST_URL . 'assets/admin.css',
 			array(),
-			WUN_VERSION
+			KIPPHARD_WISHLIST_VERSION
 		);
 		wp_enqueue_script(
-			'wun-admin',
-			WUN_URL . 'assets/admin.js',
+			'kipphard-wishlist-admin',
+			KIPPHARD_WISHLIST_URL . 'assets/admin.js',
 			array(),
-			WUN_VERSION,
+			KIPPHARD_WISHLIST_VERSION,
 			true
 		);
 	}
@@ -69,15 +69,16 @@ class Admin {
 	 * Einstellungen speichern.
 	 */
 	public function handle_save_settings() {
-		Helpers::guard_post( 'wun_save_settings' );
+		Helpers::guard_post( 'kipphard_wishlist_save_settings' );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in Helpers::guard_post() above.
 		$clean = Helpers::sanitize_settings( $_POST );
 		update_option( Helpers::OPT_SETTINGS, $clean );
 
 		wp_safe_redirect(
 			add_query_arg(
 				array(
-					'page'   => WUN_SLUG . '-settings',
+					'page'   => KIPPHARD_WISHLIST_SLUG . '-settings',
 					'notice' => 'saved',
 				),
 				admin_url( 'admin.php' )
@@ -98,12 +99,15 @@ class Admin {
 			return;
 		}
 
-		$notice       = isset( $_GET['notice'] ) ? sanitize_key( $_GET['notice'] ) : '';
-		$is_pro       = Helpers::is_pro();
-		$settings     = (array) get_option( Helpers::OPT_SETTINGS, array() );
-		$defaults     = Helpers::defaults();
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only display value, no state change.
+		$notice         = isset( $_GET['notice'] ) ? sanitize_key( $_GET['notice'] ) : '';
+		$sharing_active = class_exists( __NAMESPACE__ . '\\Sharing' );
+		$settings       = (array) get_option( Helpers::OPT_SETTINGS, array() );
+		$defaults       = Helpers::defaults();
 
 		$button_label  = isset( $settings['button_label'] ) ? $settings['button_label'] : $defaults['button_label'];
+		$in_list_label = isset( $settings['in_list_label'] ) ? $settings['in_list_label'] : $defaults['in_list_label'];
+		$button_style  = isset( $settings['button_style'] ) ? $settings['button_style'] : $defaults['button_style'];
 		$remove_label  = isset( $settings['remove_label'] ) ? $settings['remove_label'] : $defaults['remove_label'];
 		$show_on_loop  = isset( $settings['show_on_loop'] ) ? (bool) $settings['show_on_loop'] : $defaults['show_on_loop'];
 		$show_on_single = isset( $settings['show_on_single'] ) ? (bool) $settings['show_on_single'] : $defaults['show_on_single'];
@@ -125,22 +129,22 @@ class Admin {
 		);
 		?>
 		<div class="wrap wun-wrap">
-			<h1><?php esc_html_e( 'Wunschliste – Einstellungen', 'wunschliste' ); ?></h1>
+			<h1><?php esc_html_e( 'Wishlist – Settings', 'kipphard-wishlist' ); ?></h1>
 
 			<?php if ( 'saved' === $notice ) : ?>
 				<div class="notice notice-success is-dismissible">
-					<p><?php esc_html_e( 'Einstellungen gespeichert.', 'wunschliste' ); ?></p>
+					<p><?php esc_html_e( 'Settings saved.', 'kipphard-wishlist' ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-				<input type="hidden" name="action" value="wun_save_settings">
-				<?php wp_nonce_field( 'wun_save_settings' ); ?>
+				<input type="hidden" name="action" value="kipphard_wishlist_save_settings">
+				<?php wp_nonce_field( 'kipphard_wishlist_save_settings' ); ?>
 
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row">
-							<label for="wun-button-label"><?php esc_html_e( 'Button-Beschriftung', 'wunschliste' ); ?></label>
+							<label for="wun-button-label"><?php esc_html_e( 'Button label', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-button-label" name="button_label" class="regular-text"
@@ -149,7 +153,28 @@ class Admin {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-remove-label"><?php esc_html_e( 'Entfernen-Beschriftung', 'wunschliste' ); ?></label>
+							<label for="wun-in-list-label"><?php esc_html_e( 'In-wishlist label', 'kipphard-wishlist' ); ?></label>
+						</th>
+						<td>
+							<input type="text" id="wun-in-list-label" name="in_list_label" class="regular-text"
+								value="<?php echo esc_attr( $in_list_label ); ?>">
+							<p class="description"><?php esc_html_e( 'Shown once a product has been added (button style).', 'kipphard-wishlist' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="wun-button-style"><?php esc_html_e( 'Button style', 'kipphard-wishlist' ); ?></label>
+						</th>
+						<td>
+							<select id="wun-button-style" name="button_style">
+								<option value="button" <?php selected( $button_style, 'button' ); ?>><?php esc_html_e( 'Text button', 'kipphard-wishlist' ); ?></option>
+								<option value="icon" <?php selected( $button_style, 'icon' ); ?>><?php esc_html_e( 'Heart icon on the product image', 'kipphard-wishlist' ); ?></option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="wun-remove-label"><?php esc_html_e( 'Remove label', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-remove-label" name="remove_label" class="regular-text"
@@ -157,28 +182,28 @@ class Admin {
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Button anzeigen', 'wunschliste' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Show button', 'kipphard-wishlist' ); ?></th>
 						<td>
 							<fieldset>
 								<label>
 									<input type="checkbox" name="show_on_loop" value="1" <?php checked( $show_on_loop ); ?>>
-									<?php esc_html_e( 'In Produktlisten (Shop, Kategorie)', 'wunschliste' ); ?>
+									<?php esc_html_e( 'In product lists (shop, category)', 'kipphard-wishlist' ); ?>
 								</label>
 								<br>
 								<label>
 									<input type="checkbox" name="show_on_single" value="1" <?php checked( $show_on_single ); ?>>
-									<?php esc_html_e( 'Auf Einzelprodukt-Seiten', 'wunschliste' ); ?>
+									<?php esc_html_e( 'On single product pages', 'kipphard-wishlist' ); ?>
 								</label>
 							</fieldset>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-page-id"><?php esc_html_e( 'Wunschlisten-Seite', 'wunschliste' ); ?></label>
+							<label for="wun-page-id"><?php esc_html_e( 'Wishlist page', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<select id="wun-page-id" name="page_id">
-								<option value="0"><?php esc_html_e( '— Keine Seite ausgewählt —', 'wunschliste' ); ?></option>
+								<option value="0"><?php esc_html_e( '— No page selected —', 'kipphard-wishlist' ); ?></option>
 								<?php foreach ( $pages as $p ) : ?>
 									<option value="<?php echo esc_attr( $p->ID ); ?>" <?php selected( $page_id, $p->ID ); ?>>
 										<?php echo esc_html( $p->post_title ); ?>
@@ -186,13 +211,13 @@ class Admin {
 								<?php endforeach; ?>
 							</select>
 							<p class="description">
-								<?php esc_html_e( 'Seite mit dem Shortcode [wunschliste].', 'wunschliste' ); ?>
+								<?php esc_html_e( 'Page containing the [kipphard_wishlist] shortcode.', 'kipphard-wishlist' ); ?>
 							</p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-empty-text"><?php esc_html_e( 'Leer-Hinweis', 'wunschliste' ); ?></label>
+							<label for="wun-empty-text"><?php esc_html_e( 'Empty notice', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-empty-text" name="empty_text" class="large-text"
@@ -201,7 +226,7 @@ class Admin {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-msg-added"><?php esc_html_e( 'Meldung: Hinzugefügt', 'wunschliste' ); ?></label>
+							<label for="wun-msg-added"><?php esc_html_e( 'Message: Added', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-msg-added" name="msg_added" class="large-text"
@@ -210,7 +235,7 @@ class Admin {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-msg-removed"><?php esc_html_e( 'Meldung: Entfernt', 'wunschliste' ); ?></label>
+							<label for="wun-msg-removed"><?php esc_html_e( 'Message: Removed', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-msg-removed" name="msg_removed" class="large-text"
@@ -219,7 +244,7 @@ class Admin {
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="wun-msg-error"><?php esc_html_e( 'Fehlermeldung', 'wunschliste' ); ?></label>
+							<label for="wun-msg-error"><?php esc_html_e( 'Error message', 'kipphard-wishlist' ); ?></label>
 						</th>
 						<td>
 							<input type="text" id="wun-msg-error" name="msg_error" class="large-text"
@@ -228,86 +253,70 @@ class Admin {
 					</tr>
 				</table>
 
-				<?php submit_button( __( 'Einstellungen speichern', 'wunschliste' ) ); ?>
+				<?php if ( class_exists( '\Kipphard\Shared\Appearance' ) ) : ?>
+					<h2 class="title"><?php esc_html_e( 'Appearance', 'kipphard-wishlist' ); ?></h2>
+					<p class="description" style="margin-bottom:8px;">
+						<?php esc_html_e( 'Make the wishlist match your brand in seconds — or switch it off to inherit your theme completely.', 'kipphard-wishlist' ); ?>
+					</p>
+					<table class="form-table" role="presentation">
+						<?php \Kipphard\Shared\Appearance::render_fields( $settings ); ?>
+					</table>
+				<?php endif; ?>
+
+				<?php submit_button( __( 'Save settings', 'kipphard-wishlist' ) ); ?>
 			</form>
 
-			<?php if ( $is_pro ) : ?>
+			<?php if ( $sharing_active ) : ?>
 
 				<hr>
 				<div class="card wun-pro-settings" style="max-width:680px;padding:20px 24px;margin-top:20px;">
-					<h2><?php esc_html_e( 'Pro-Funktionen', 'wunschliste' ); ?></h2>
-					<p><?php esc_html_e( 'Wunschliste Pro ist aktiv.', 'wunschliste' ); ?></p>
-					<ul>
-						<li><?php esc_html_e( 'Wunschliste teilen: öffentlicher Link zum Teilen', 'wunschliste' ); ?></li>
-						<li><?php esc_html_e( 'Variationsunterstützung: Wunschliste auf Variantenebene', 'wunschliste' ); ?></li>
-						<li><?php esc_html_e( 'Analytik: meistgewünschte Produkte im Admin', 'wunschliste' ); ?></li>
-					</ul>
+					<h2><?php esc_html_e( 'Sharing', 'kipphard-wishlist' ); ?></h2>
+					<p><?php esc_html_e( 'Wishlist sharing is active — customers can generate a public link to their wishlist.', 'kipphard-wishlist' ); ?></p>
 
-					<?php if ( Helpers::is_pro() ) : ?>
-						<h3><?php esc_html_e( 'Meistgewünschte Produkte', 'wunschliste' ); ?></h3>
-						<?php
-						$most_wished = Wishlist::most_wished( 10 );
-						if ( empty( $most_wished ) ) :
-							?>
-							<p><?php esc_html_e( 'Noch keine Daten vorhanden.', 'wunschliste' ); ?></p>
-						<?php else : ?>
-							<table class="wp-list-table widefat fixed striped" style="max-width:480px;">
-								<thead>
+					<h3><?php esc_html_e( 'Most-wished products', 'kipphard-wishlist' ); ?></h3>
+					<?php
+					$most_wished = Wishlist::most_wished( 10 );
+					if ( empty( $most_wished ) ) :
+						?>
+						<p><?php esc_html_e( 'No data available yet.', 'kipphard-wishlist' ); ?></p>
+					<?php else : ?>
+						<table class="wp-list-table widefat fixed striped" style="max-width:480px;">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Product', 'kipphard-wishlist' ); ?></th>
+									<th><?php esc_html_e( 'Entries', 'kipphard-wishlist' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $most_wished as $row ) : ?>
+									<?php
+									$pid      = absint( $row['product_id'] );
+									$product  = wc_get_product( $pid );
+									$pname    = $product ? $product->get_name() : sprintf( '#%d', $pid );
+									$edit_url = $product ? get_edit_post_link( $pid ) : '';
+									?>
 									<tr>
-										<th><?php esc_html_e( 'Produkt', 'wunschliste' ); ?></th>
-										<th><?php esc_html_e( 'Einträge', 'wunschliste' ); ?></th>
+										<td>
+											<?php if ( $edit_url ) : ?>
+												<a href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( $pname ); ?></a>
+											<?php else : ?>
+												<?php echo esc_html( $pname ); ?>
+											<?php endif; ?>
+										</td>
+										<td><?php echo esc_html( $row['cnt'] ); ?></td>
 									</tr>
-								</thead>
-								<tbody>
-									<?php foreach ( $most_wished as $row ) : ?>
-										<?php
-										$pid      = absint( $row['product_id'] );
-										$product  = wc_get_product( $pid );
-										$pname    = $product ? $product->get_name() : sprintf( '#%d', $pid );
-										$edit_url = $product ? get_edit_post_link( $pid ) : '';
-										?>
-										<tr>
-											<td>
-												<?php if ( $edit_url ) : ?>
-													<a href="<?php echo esc_url( $edit_url ); ?>"><?php echo esc_html( $pname ); ?></a>
-												<?php else : ?>
-													<?php echo esc_html( $pname ); ?>
-												<?php endif; ?>
-											</td>
-											<td><?php echo esc_html( $row['cnt'] ); ?></td>
-										</tr>
-									<?php endforeach; ?>
-								</tbody>
-							</table>
-						<?php endif; ?>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
 					<?php endif; ?>
 				</div>
 
 			<?php else : ?>
 
-				<hr>
-				<div class="card wun-pro-teaser" style="max-width:680px;padding:20px 24px;margin-top:20px;background:#f6f7f7;border:1px dashed #a7aaad;">
-					<h2><?php esc_html_e( 'Wunschliste Pro', 'wunschliste' ); ?></h2>
-					<ul class="wun-pro-features">
-						<li>
-							<span class="dashicons dashicons-share"></span>
-							<?php esc_html_e( 'Wunschliste teilen: öffentlicher Link für Freunde & Familie', 'wunschliste' ); ?>
-						</li>
-						<li>
-							<span class="dashicons dashicons-networking"></span>
-							<?php esc_html_e( 'Variationsunterstützung: Einträge auf Produktvariantenebene', 'wunschliste' ); ?>
-						</li>
-						<li>
-							<span class="dashicons dashicons-chart-bar"></span>
-							<?php esc_html_e( 'Analytik: meistgewünschte Produkte im Admin-Dashboard', 'wunschliste' ); ?>
-						</li>
-					</ul>
-					<p>
-						<a href="https://products.kipphard.com/wunschliste" target="_blank" rel="noopener noreferrer" class="button button-secondary">
-							<?php esc_html_e( 'Jetzt upgraden', 'wunschliste' ); ?>
-						</a>
-					</p>
-				</div>
+				<p class="description" style="margin-top:20px;">
+					<?php esc_html_e( 'Looking for wishlist sharing?', 'kipphard-wishlist' ); ?>
+					<a href="https://kipphard.com/products/wunschliste" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'See Wishlist Pro.', 'kipphard-wishlist' ); ?></a>
+				</p>
 
 			<?php endif; ?>
 
